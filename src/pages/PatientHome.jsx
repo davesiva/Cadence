@@ -130,7 +130,7 @@ export default function PatientHome() {
             <p className="text-sm">
               Next appointment: <span className="font-semibold text-accent">Mar 28</span>
             </p>
-            <p className="text-xs text-secondary">Dr. Tan Wei Lin · 6 days away</p>
+            <p className="text-xs text-secondary">Dr. Kamini · 6 days away</p>
           </div>
         </div>
       </motion.div>

@@ -73,7 +73,7 @@ export const patients = [
     streak: 14,
     lastCheckIn: '2h ago',
     nextAppointment: '2026-03-28',
-    doctor: 'Dr. Tan Wei Lin',
+    doctor: 'Dr. Kamini',
     summary: 'Consistent improvement in mood and sleep quality over the past two weeks. Energy levels have stabilised. Patient reported feeling motivated to resume jogging. No missed check-ins in 14 days.',
   },
   {
@@ -88,7 +88,7 @@ export const patients = [
     streak: 8,
     lastCheckIn: '5h ago',
     nextAppointment: '2026-04-02',
-    doctor: 'Dr. Tan Wei Lin',
+    doctor: 'Dr. Kamini',
     summary: 'Mood and energy levels relatively stable. Sleep quality variable — correlates with reported work stress. Anxiety symptoms persist but are not worsening. Patient engaging consistently with check-ins.',
   },
   {
@@ -103,7 +103,7 @@ export const patients = [
     streak: 0,
     lastCheckIn: '3 days ago',
     nextAppointment: '2026-03-25',
-    doctor: 'Dr. Tan Wei Lin',
+    doctor: 'Dr. Kamini',
     alert: true,
     summary: 'Significant decline in mood and energy over the past 3 days after a relatively stable period. Sleep quality deteriorated. Patient missed 3 consecutive check-ins before the decline entries. Last note expressed difficulty getting out of bed. Recommend urgent review.',
   },

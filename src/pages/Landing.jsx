@@ -28,14 +28,14 @@ export default function Landing() {
 
         <div className="mt-10 flex flex-col gap-3 w-64 mx-auto">
           <button
-            onClick={() => navigate('/patient')}
+            onClick={() => navigate('/login/patient')}
             className="w-full py-3.5 px-6 rounded-lg bg-accent text-white font-body font-medium text-base
                        hover:bg-accent/90 transition-colors cursor-pointer"
           >
             I'm a Patient
           </button>
           <button
-            onClick={() => navigate('/clinician')}
+            onClick={() => navigate('/login/clinician')}
             className="w-full py-3.5 px-6 rounded-lg border border-accent text-accent font-body font-medium text-base
                        hover:bg-accent/5 transition-colors cursor-pointer"
           >

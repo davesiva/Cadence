@@ -72,7 +72,7 @@ export const patients = [
     trend: computeTrend(sarahEntries),
     streak: 14,
     lastCheckIn: '2h ago',
-    nextAppointment: '2026-03-28',
+    nextAppointment: '2026-05-12',
     doctor: 'Dr. Kamini',
     summary: 'Consistent improvement in mood and sleep quality over the past two weeks. Energy levels have stabilised. Patient reported feeling motivated to resume jogging. No missed check-ins in 14 days.',
   },

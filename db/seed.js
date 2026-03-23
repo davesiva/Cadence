@@ -12,7 +12,7 @@ function weeksAgo(n) {
 }
 
 const patientsData = [
-  { id: 'sarah-chen', name: 'Sarah Chen', diagnosis: 'Major Depressive Disorder', age: 34, doctor: 'Dr. Kamini', next_appointment: '2026-03-28' },
+  { id: 'sarah-chen', name: 'Sarah Chen', diagnosis: 'Major Depressive Disorder', age: 34, doctor: 'Dr. Kamini', next_appointment: '2026-05-12' },
   { id: 'james-lim', name: 'James Lim', diagnosis: 'Generalised Anxiety Disorder', age: 28, doctor: 'Dr. Kamini', next_appointment: '2026-04-02' },
   { id: 'priya-nair', name: 'Priya Nair', diagnosis: 'Bipolar II — Depressive Episode', age: 41, doctor: 'Dr. Kamini', next_appointment: '2026-03-25' },
 ]

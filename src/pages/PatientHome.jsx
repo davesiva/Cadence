@@ -67,7 +67,7 @@ export default function PatientHome() {
   const entries = patient?.entries || []
   const streak = patient?.streak || 0
   const today = new Date().toISOString().split('T')[0]
-  const checkedIn = entries.some(e => e.date === today)
+  const checkedIn = false // DEMO MODE: always allow check-in (was: entries.some(e => e.date === today))
   const weekDays = getWeekDays(entries)
   const appt = formatAppointmentDate(patient?.nextAppointment)
 

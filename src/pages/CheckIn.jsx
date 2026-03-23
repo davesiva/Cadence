@@ -143,12 +143,19 @@ export default function CheckIn() {
           {isNoteStep && (
             <>
               <h2 className="text-2xl mt-8">{journalHint}</h2>
-              <p className="text-secondary text-sm mt-2">Optional — a quick note for your records</p>
+              <p className="text-secondary text-sm mt-2">
+                Share what you'd like your care team to know — how your day went, anything affecting your wellbeing, or changes you've noticed.
+              </p>
+              <div className="mt-4 px-3 py-2 bg-accent/5 rounded-lg">
+                <p className="text-xs text-accent/70">
+                  This note will be shared with your clinician to help guide your care. Only include what you're comfortable with them seeing.
+                </p>
+              </div>
               <textarea
                 value={values.note}
                 onChange={e => setValues(prev => ({ ...prev, note: e.target.value }))}
-                placeholder="Today I..."
-                className="mt-6 w-full h-36 px-4 py-3 rounded-xl border border-border bg-card text-primary text-base
+                placeholder="e.g. Had a stressful day at work but managed to go for a walk afterwards..."
+                className="mt-4 w-full h-36 px-4 py-3 rounded-xl border border-border bg-card text-primary text-base
                            placeholder:text-secondary/50 resize-none focus:outline-none focus:border-accent
                            transition-colors font-body"
               />

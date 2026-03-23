@@ -1,25 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Check } from 'lucide-react'
-import { saveEntry, moodLabels, sleepLabels, energyLabels } from '../data/mockData'
+import { moodLabels, sleepLabels, energyLabels, saveEntry } from '../data/mockData'
+import { api } from '../utils/api'
 
 const steps = [
-  {
-    key: 'mood',
-    question: 'How is your mood right now?',
-    labels: moodLabels,
-  },
-  {
-    key: 'sleep',
-    question: 'How did you sleep last night?',
-    labels: sleepLabels,
-  },
-  {
-    key: 'energy',
-    question: 'How are your energy levels?',
-    labels: energyLabels,
-  },
+  { key: 'mood', question: 'How is your mood right now?', labels: moodLabels },
+  { key: 'sleep', question: 'How did you sleep last night?', labels: sleepLabels },
+  { key: 'energy', question: 'How are your energy levels?', labels: energyLabels },
 ]
 
 function ScaleSelector({ step, value, onChange }) {
@@ -47,6 +36,14 @@ export default function CheckIn() {
   const [currentStep, setCurrentStep] = useState(0)
   const [values, setValues] = useState({ mood: 0, sleep: 0, energy: 0, note: '' })
   const [done, setDone] = useState(false)
+  const [journalHint, setJournalHint] = useState('Anything else on your mind?')
+
+  // Fetch adaptive journal hint
+  useEffect(() => {
+    api.getJournalHint('self').then(data => {
+      if (data.hint) setJournalHint(data.hint)
+    }).catch(() => {})
+  }, [])
 
   const isScaleStep = currentStep < 3
   const isNoteStep = currentStep === 3
@@ -55,13 +52,23 @@ export default function CheckIn() {
   function handleSelect(val) {
     const key = steps[currentStep].key
     setValues(prev => ({ ...prev, [key]: val }))
-    // Auto-advance after brief delay
     setTimeout(() => setCurrentStep(prev => prev + 1), 300)
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const today = new Date().toISOString().split('T')[0]
-    saveEntry({ date: today, ...values })
+    const entry = { date: today, ...values }
+
+    // Save to localStorage as fallback
+    saveEntry(entry)
+
+    // Post to API
+    try {
+      await api.submitEntry('self', entry)
+    } catch (err) {
+      console.error('API submission failed, saved locally:', err)
+    }
+
     setDone(true)
   }
 
@@ -92,7 +99,6 @@ export default function CheckIn() {
 
   return (
     <div className="min-h-screen min-h-dvh max-w-lg mx-auto px-5 py-6 pb-[env(safe-area-inset-bottom,24px)]">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => currentStep > 0 ? setCurrentStep(prev => prev - 1) : navigate('/patient')}
@@ -106,7 +112,6 @@ export default function CheckIn() {
         </span>
       </div>
 
-      {/* Progress bar */}
       <div className="mt-4 h-1 bg-border rounded-full overflow-hidden">
         <motion.div
           className="h-full bg-accent rounded-full"
@@ -137,7 +142,7 @@ export default function CheckIn() {
 
           {isNoteStep && (
             <>
-              <h2 className="text-2xl mt-8">Anything else on your mind?</h2>
+              <h2 className="text-2xl mt-8">{journalHint}</h2>
               <p className="text-secondary text-sm mt-2">Optional — a quick note for your records</p>
               <textarea
                 value={values.note}

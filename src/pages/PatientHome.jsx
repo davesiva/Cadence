@@ -1,7 +1,8 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ChevronRight, Calendar, Flame } from 'lucide-react'
-import { getStreak, hasCheckedInToday, getPatientEntries } from '../data/mockData'
+import { api } from '../utils/api'
 import InfoTooltip from '../components/InfoTooltip'
 
 function getGreeting() {
@@ -11,14 +12,12 @@ function getGreeting() {
   return 'Good evening'
 }
 
-function getWeekDays() {
+function getWeekDays(entries) {
   const today = new Date()
-  const dayOfWeek = today.getDay() // 0=Sun
-  // Get Monday of current week
+  const dayOfWeek = today.getDay()
   const monday = new Date(today)
   monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7))
 
-  const entries = getPatientEntries()
   const days = []
   const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
@@ -30,26 +29,51 @@ function getWeekDays() {
     const isToday = dateStr === todayStr
     const isFuture = d > today && !isToday
     const completed = entries.some(e => e.date === dateStr)
-
     days.push({ label: labels[i], isToday, isFuture, completed })
   }
   return days
 }
 
+function formatAppointmentDate(dateStr) {
+  if (!dateStr) return null
+  const d = new Date(dateStr + 'T00:00:00')
+  const today = new Date()
+  const diffDays = Math.ceil((d - today) / (1000 * 60 * 60 * 24))
+  return {
+    display: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    daysAway: diffDays
+  }
+}
+
 export default function PatientHome() {
   const navigate = useNavigate()
-  const streak = getStreak()
-  const checkedIn = hasCheckedInToday()
-  const weekDays = getWeekDays()
+  const [patient, setPatient] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    api.getPatient('self').then(data => {
+      setPatient(data)
+      setLoading(false)
+    }).catch(err => {
+      console.error('Failed to load patient data:', err)
+      setLoading(false)
+    })
+  }, [])
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>
+  }
+
+  const entries = patient?.entries || []
+  const streak = patient?.streak || 0
+  const today = new Date().toISOString().split('T')[0]
+  const checkedIn = entries.some(e => e.date === today)
+  const weekDays = getWeekDays(entries)
+  const appt = formatAppointmentDate(patient?.nextAppointment)
 
   return (
     <div className="min-h-screen min-h-dvh max-w-lg mx-auto px-5 py-6 pb-[env(safe-area-inset-bottom,24px)]">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* Back */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
         <button
           onClick={() => navigate('/')}
           className="flex items-center gap-1 text-secondary text-sm hover:text-primary transition-colors cursor-pointer min-h-[44px]"
@@ -58,13 +82,11 @@ export default function PatientHome() {
           Back
         </button>
 
-        {/* Greeting */}
         <p className="mt-6 text-accent text-sm font-medium">{getGreeting()}</p>
         <h1 className="text-3xl mt-1 leading-tight">
           How are you<br />feeling today?
         </h1>
 
-        {/* Streak card */}
         {streak > 0 && (
           <div className="mt-8 bg-card border border-border rounded-xl p-5 flex items-center gap-4">
             <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-2xl shrink-0">
@@ -80,7 +102,6 @@ export default function PatientHome() {
           </div>
         )}
 
-        {/* Week calendar */}
         <div className="mt-4 bg-card border border-border rounded-xl p-5">
           <div className="flex items-center gap-1.5 mb-4">
             <p className="text-xs tracking-[0.15em] text-secondary uppercase">This week</p>
@@ -106,7 +127,6 @@ export default function PatientHome() {
           </div>
         </div>
 
-        {/* Check-in CTA */}
         <button
           onClick={() => navigate('/patient/checkin')}
           disabled={checkedIn}
@@ -123,16 +143,17 @@ export default function PatientHome() {
           {checkedIn ? 'Come back tomorrow' : 'Takes about 1 minute'}
         </p>
 
-        {/* Next appointment */}
-        <div className="mt-6 bg-accent-light rounded-xl p-4 flex items-center gap-3">
-          <Calendar size={20} className="text-accent shrink-0" />
-          <div>
-            <p className="text-sm">
-              Next appointment: <span className="font-semibold text-accent">Mar 28</span>
-            </p>
-            <p className="text-xs text-secondary">Dr. Kamini · 6 days away</p>
+        {appt && (
+          <div className="mt-6 bg-accent-light rounded-xl p-4 flex items-center gap-3">
+            <Calendar size={20} className="text-accent shrink-0" />
+            <div>
+              <p className="text-sm">
+                Next appointment: <span className="font-semibold text-accent">{appt.display}</span>
+              </p>
+              <p className="text-xs text-secondary">{patient.doctor} · {appt.daysAway} days away</p>
+            </div>
           </div>
-        </div>
+        )}
       </motion.div>
     </div>
   )
